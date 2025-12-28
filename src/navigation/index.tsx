@@ -1,68 +1,44 @@
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { createStaticNavigation, StaticParamList } from '@react-navigation/native';
+
+import { NavigationContainer, StaticParamList } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { Platform } from 'react-native';
+import ROUTES from './routes';
+import DrawerNavigator from './drawerNavigator';
+import AuthContainer from './authstack';
 
-import { Explore } from './screens/Explore';
-import { Home } from './screens/Home';
-import { NotFound } from './screens/NotFound';
 
-import { HapticTab } from '@/components/HapticTab';
-import { IconSymbol } from '@/components/ui/IconSymbol';
-import TabBarBackground from '@/components/ui/TabBarBackground';
+const RootStack = createNativeStackNavigator();
 
-const HomeTabs = createBottomTabNavigator({
-  screens: {
-    Home: {
-      screen: Home,
-      options: {
-        headerShown: false,
-        tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
-      },
-    },
-    Explore: {
-      screen: Explore,
-      options: {
-        headerShown: false,
-        tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
-      },
-    },
-  },
-  screenOptions: {
-    headerShown: false,
-    tabBarButton: HapticTab,
-    tabBarBackground: TabBarBackground,
-    tabBarStyle: Platform.select({
-      ios: {
-        // Use a transparent background on iOS to show the blur effect
-        possition: 'absolute',
-      },
-      default: {},
-    }),
-  },
-});
+const isUserLoggedIn = false; // Replace with your authentication logic
 
-const RootStack = createNativeStackNavigator({
-  screens: {
-    HomeTabs: {
-      screen: HomeTabs,
-      options: {
-        headerShown: false,
-      },
-    },
-    NotFound: {
-      screen: NotFound,
-      options: {
-        title: '404',
-      },
-      linking: {
-        path: '*',
-      },
-    },
-  },
-});
+const RootStackContainer = () => { 
+  
+  
+  return(
+    <NavigationContainer>
+      <RootStack.Navigator
+        // initialRouteName={ROUTES.DRAWER_NAVIGATOR}
+        screenOptions={{
+          headerShown: false,
+        }}
+      >
+        {isUserLoggedIn ? (
+          <RootStack.Screen
+            name={ROUTES.DRAWER_NAVIGATOR}
+            component={DrawerNavigator}
+          />
+        ) : (
+          <RootStack.Screen
+            name={ROUTES.AUTH_STACK}
+            component={AuthContainer}
+          />
+        )}
+      </RootStack.Navigator>
+    </NavigationContainer>
+)};  
+    
 
-export const Navigation = createStaticNavigation(RootStack);
+export default RootStackContainer;
+// export const Navigation = createStaticNavigation(RootStackContainer);
 
 type RootStackParamList = StaticParamList<typeof RootStack>;
 

@@ -1,0 +1,5 @@
+export const BOX_SIZING = {
+    PADDING_HORIZONTAL: 16,
+    PADDING_VERTICAL: 12,
+    BORDER_RADIUS: 8,
+}
