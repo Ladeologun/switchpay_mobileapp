@@ -10,7 +10,7 @@ const Auth = createNativeStackNavigator();
 
 const AuthContainer: React.FC =  () => (
     <Auth.Navigator
-        initialRouteName={ROUTES.REGISTER}
+        initialRouteName={ROUTES.LOGIN}
         screenOptions={{
             headerShown: false
         }}

@@ -49,6 +49,11 @@ export default StyleSheet.create({
         fontFamily:FONTS.POPPINS_SEMI_BOLD,
         fontSize:14,
         color:COLOURS.light.accentDeepYellow
+    },
+    errorMessageStyle:{
+        color: COLOURS.dark.white, 
+        textAlign: "center", 
+        fontFamily:FONTS.POPPINS_MEDIUM
     }
     
  })

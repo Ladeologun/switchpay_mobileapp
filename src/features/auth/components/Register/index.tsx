@@ -1,4 +1,3 @@
-import { useState } from "react";
 import {Pressable, Text,View} from "react-native";
 import styles from "./styles";
 import AuthScreenLayout from "@/components/AuthScreenLayout";
@@ -8,6 +7,13 @@ import * as Yup from "yup";
 import PrimaryButton from "@/components/PrimaryButton";
 import { useNavigation } from "@react-navigation/native";
 import ROUTES from "@/navigation/routes";
+import { useMutation } from "@tanstack/react-query";
+import { AuthAPIResponse, AuthErrorResponse, RegisterPayload } from "../../types";
+import { AxiosResponse } from "axios";
+import { RegisterRequestAPI } from "../../api";
+import { showMessage } from "react-native-flash-message";
+import { useAppDispatch } from "@/hooks";
+import { saveIDToken, saveUserDetails } from "../../actions";
 
 interface RegisterFormValues {
   firstName: string;
@@ -20,7 +26,26 @@ interface RegisterFormValues {
 const Register: React.FC = () => {
 
     const navigation = useNavigation();
-    const [isSubmittingValues, setIsSubmittingValues] = useState(false);
+    const dispatch = useAppDispatch();
+
+    const registerRequestMutation = useMutation<AuthAPIResponse, AxiosResponse<AuthErrorResponse>, RegisterPayload>({
+        mutationFn: RegisterRequestAPI,
+        onError: (error) => {
+            showMessage({
+                message: error?.data?.message ?? "Error occurred during login.",
+                type: "danger",
+                titleStyle: styles.errorMessageStyle,
+            });
+        },
+        onSuccess: (response, params) => {
+            dispatch(saveUserDetails({
+                email: params.email,
+                firstName: params.firstName,
+                lastName: params.lastName,
+            }));
+            dispatch(saveIDToken(response?.data?.token));
+        }
+    })
 
     const initialFormValues: RegisterFormValues = {
         firstName: "",
@@ -31,13 +56,13 @@ const Register: React.FC = () => {
     };
 
     const save = async (values: RegisterFormValues,formikHelpers: FormikHelpers<RegisterFormValues>) => {
-        setIsSubmittingValues(true);
-        setTimeout(() => {
-            console.log("Form Values:", values);
-            setIsSubmittingValues(false);
-            // formikHelpers.resetForm();
-        }, 10000);
-        // Handle form submission logic here
+        registerRequestMutation.mutate({
+            firstName: values.firstName,
+            lastName: values.lastName,
+            email: values.email,
+            password: values.password,
+        });
+       
     };
 
     const validationSchema = Yup.object().shape({
@@ -71,29 +96,23 @@ const Register: React.FC = () => {
                         <FormikInput 
                             name="firstName" 
                             label="First Name" 
-                            editable={!isSubmittingValues}
-                            // placeholder="Enter your first name"
-                            // placeholderTextColor={COLOURS.light.textGrey}
-                            // onChangeText={handleChange("firstName")}
+                            editable={!registerRequestMutation.isPending}
                         />
                         <FormikInput 
                             name="lastName" 
                             label="Last Name" 
-                            editable={!isSubmittingValues}
-
-                            // onChangeText={handleChange("lastName")}
+                            editable={!registerRequestMutation.isPending}
                         />
                         <FormikInput 
                             name="email" 
                             label="Email" 
-                            editable={!isSubmittingValues}
-                            // onChangeText={handleChange("email")}
+                            editable={!registerRequestMutation.isPending}
                         />
                         <FormikInput
                             name="password"
                             label="Password"
                             secureText={true}
-                            editable={!isSubmittingValues}
+                            editable={!registerRequestMutation.isPending}
                             hasRightAffix
                             
                         />
@@ -101,14 +120,14 @@ const Register: React.FC = () => {
                             name="confirmPassword"
                             label="Confirm Password"
                             secureText={true}
-                            editable={!isSubmittingValues}
+                            editable={!registerRequestMutation.isPending}
                             hasRightAffix
                         />
 
                         <PrimaryButton 
                             onPress={handleSubmit} 
-                            disabled={!isValid || isSubmittingValues || !dirty}
-                            loading={isSubmittingValues} 
+                            disabled={!isValid || registerRequestMutation.isPending || !dirty}
+                            loading={registerRequestMutation.isPending} 
                         />
 
                         <View style={styles.altInfoTextWrapper}>

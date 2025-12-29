@@ -8,13 +8,24 @@ import Feather from '@expo/vector-icons/Feather';
 import { StatusBar } from "expo-status-bar";
 import { DrawerActions, useNavigation } from "@react-navigation/native";
 import { COLOURS } from "@/constants/Colors";
+import { useQuery } from "@tanstack/react-query";
+import { AccountsRequestAPI } from "../../api";
 
 
 const DashBoard:React.FC =  () => {
 
     const navigation = useNavigation();
     const [showBalance, setShowBalance] = useState(false)
-    let imageUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQz1mHFSD9UAf9NKkI7_buBIIOdn6AY5rxqAA&s"
+    let imageUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQz1mHFSD9UAf9NKkI7_buBIIOdn6AY5rxqAA&s";
+
+    // const {
+    //     data: accountResponseData,
+    //     isLoading: isLoadingAccounts,
+    //     refetch: refetchAccounts
+    // } = useQuery({
+    //     queryKey:[QUERY_KEYS.BUMPATRANSACTIONS,{}],
+    //     queryFn: AccountsRequestAPI
+    // });
     
     return (
         <SafeAreaView style={styles.wrapper}>

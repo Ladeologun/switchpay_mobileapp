@@ -62,6 +62,11 @@ export default StyleSheet.create({
         justifyContent:'center',
         alignItems:'center',
         marginTop:42,
+    },
+    errorMessageStyle:{
+        color: COLOURS.dark.white, 
+        textAlign: "center", 
+        fontFamily:FONTS.POPPINS_MEDIUM
     }
     
  })

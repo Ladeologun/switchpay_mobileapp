@@ -8,13 +8,31 @@ import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { Alert, Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import { COLOURS } from '@/constants/Colors';
 import { FONTS } from '@/constants/Fonts';
+import { useAppDispatch, useAppSelector } from '@/hooks';
+import { logoutUser } from '@/features/auth/actions';
 
 const Drawer = createDrawerNavigator();
 
 function CustomDrawerContent(props: DrawerContentComponentProps) {
-    let imageUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQz1mHFSD9UAf9NKkI7_buBIIOdn6AY5rxqAA&s"
-   
+    const imageUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQz1mHFSD9UAf9NKkI7_buBIIOdn6AY5rxqAA&s";
+    const dispatch = useAppDispatch();
+    const auth = useAppSelector(state => state.auth);
 
+    const promptLogout = () => {
+        Alert.alert("Confirm Logout","Are you sure you want to logout?",[
+            {
+                text:"Cancel",
+                style:"cancel",
+                onPress:()=>{}
+            },
+            {
+                text:"Logout",
+                style:"destructive",
+                onPress:()=>{dispatch(logoutUser())}
+            }
+        ])
+    }
+   
   return (
     <DrawerContentScrollView {...props} style={styles.drawerScrollviewContent} contentContainerStyle={styles.contentContainer}>
         <View style={{gap:16}}>
@@ -32,8 +50,8 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
                     </Pressable>
 
                 </View>
-                <Text style={styles.nameTextStyle}>Omolade Ologun</Text>
-                <Text style={styles.emailTextStyle}>omolade4321@gmail.com</Text>
+                <Text style={styles.nameTextStyle}>{auth.userDetails?.firstName} {auth.userDetails?.lastName}</Text>
+                <Text style={styles.emailTextStyle}>{auth.userDetails?.email}</Text>
             </View>
 
             <DrawerItem
@@ -72,9 +90,7 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
         {/* <DrawerItemList {...props} /> */}
          <Pressable 
             style={styles.footer}
-            onPress={() =>{
-                Alert.alert('logging out...')
-            }}
+            onPress={promptLogout}
         >
             <MaterialIcons name="logout" size={26} color={COLOURS.light.red} />
             <Text style={styles.logoutText}>Logout</Text>

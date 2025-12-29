@@ -4,14 +4,15 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import ROUTES from './routes';
 import DrawerNavigator from './drawerNavigator';
 import AuthContainer from './authstack';
+import { useAppSelector } from '@/hooks';
 
 
 const RootStack = createNativeStackNavigator();
-
 const isUserLoggedIn = false; // Replace with your authentication logic
 
 const RootStackContainer = () => { 
-  
+
+  const token = useAppSelector((state) => state.auth.idToken);
   
   return(
     <NavigationContainer>
@@ -21,7 +22,7 @@ const RootStackContainer = () => {
           headerShown: false,
         }}
       >
-        {isUserLoggedIn ? (
+        {!!token ? (
           <RootStack.Screen
             name={ROUTES.DRAWER_NAVIGATOR}
             component={DrawerNavigator}

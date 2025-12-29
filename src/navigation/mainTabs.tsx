@@ -34,6 +34,14 @@ const TabNavigator: React.FC  = () => {
             // borderTopColor: '#444C56',
             elevation: 0,
           },
+          android: {
+            // Use a transparent background on iOS to show the blur effect
+            // position: 'absolute',
+            backgroundColor: '#1E2730',
+            borderTopWidth: 0,
+            // borderTopColor: '#444C56',
+            elevation: 0,
+          },
           default: {},
         }),
         tabBarLabelStyle:{
