@@ -23,7 +23,8 @@ export const COLOURS = {
     washedRed:"#FF6B63",
     red:"red",
     textGrey:"#ceccd7ff",
-    blue:"#1E5EFF"
+    blue:"#1E5EFF",
+    greyBlue:"#1E2730"
   },
   dark: {
     text: '#ECEDEE',
@@ -39,6 +40,7 @@ export const COLOURS = {
     washedRed:"#FF6B63",
     red:"red",
     textGrey:"#ceccd7ff",
-    blue:"#1E5EFF"
+    blue:"#1E5EFF",
+    greyBlue:"#1E2730"
   },
 };

@@ -1,7 +1,8 @@
-import { useMemo, useState } from "react";
-import { Image, Pressable, ScrollView, Text, TouchableOpacity, View, ViewStyle } from "react-native";
+import { useMemo, useRef, useState } from "react";
+import { ActivityIndicator, Image, Pressable, ScrollView, Text, View } from "react-native";
 import styles from "./styles";
 import { SafeAreaView } from "react-native-safe-area-context";
+import AppIntroSlider from "react-native-app-intro-slider";
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import Feather from '@expo/vector-icons/Feather';
@@ -10,22 +11,37 @@ import { DrawerActions, useNavigation } from "@react-navigation/native";
 import { COLOURS } from "@/constants/Colors";
 import { useQuery } from "@tanstack/react-query";
 import { AccountsRequestAPI } from "../../api";
+import { QUERY_KEYS } from "@/constants/queryKeys";
+import AccountDetailsCard from "../_partials/AccountDetailsCard";
+import { IMAGE_URL } from "../../constants";
 
 
 const DashBoard:React.FC =  () => {
 
     const navigation = useNavigation();
-    const [showBalance, setShowBalance] = useState(false)
-    let imageUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQz1mHFSD9UAf9NKkI7_buBIIOdn6AY5rxqAA&s";
+    const [currentSlide, setCurrentSlide] = useState(0);
+    const slider = useRef(null);
 
-    // const {
-    //     data: accountResponseData,
-    //     isLoading: isLoadingAccounts,
-    //     refetch: refetchAccounts
-    // } = useQuery({
-    //     queryKey:[QUERY_KEYS.BUMPATRANSACTIONS,{}],
-    //     queryFn: AccountsRequestAPI
-    // });
+    const {
+        error,
+        data: accountResponseData,
+        isLoading: isLoadingAccounts,
+        refetch: refetchAccounts
+    } = useQuery({
+        queryKey:[QUERY_KEYS.ACCOUNTS,{}],
+        queryFn: AccountsRequestAPI,
+        enabled:true,
+        staleTime: 5 * 60 * 1000, // 5 minutes
+    });
+    
+   
+    if(isLoadingAccounts && !accountResponseData){
+        return (
+            <SafeAreaView style={[styles.wrapper, styles.loadingWrapper]}>
+                <ActivityIndicator size="large" color={COLOURS.light.accentDeepYellow} />
+            </SafeAreaView>
+        )
+    }
     
     return (
         <SafeAreaView style={styles.wrapper}>
@@ -46,7 +62,7 @@ const DashBoard:React.FC =  () => {
                    
                     <Pressable style={styles.avatarWrapper}>
                         <Image 
-                            source={{ uri: imageUrl }}
+                            source={{ uri: IMAGE_URL }}
                             style={{ width: 46, height: 46, borderRadius: 23 }}
                         />
                     </Pressable>
@@ -55,55 +71,26 @@ const DashBoard:React.FC =  () => {
 
             <ScrollView contentContainerStyle={styles.scrollViewContent}>
                 {/* Account Balance and Details */}
-                <View style={styles.accountDetailsContainer}>
-                    <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
-                        <View style={styles.currencySection}>
-                            <Image
-                                source={require("@/assets/images/NGN.png")}
-                                style={{ resizeMode: "contain", height: 20, width: 20,marginRight: 4 }}
+                <AppIntroSlider
+                    ref={slider}
+                    data={ accountResponseData?.data || []}
+                    renderItem={(data)=> {
+                        return (
+                            <AccountDetailsCard 
+                                balance={data.item.balance} 
+                                currencyCode={data.item.currency} 
+                                currencySymbol={data.item.curencyCode}
                             />
-                            <Text style={styles.currencyText}>{`NGN`}</Text>
-                        </View>
+                        )
+                    }}
+                    onSlideChange={index => setCurrentSlide(index)}
+                    style={{ width: '100%',flexGrow:0,gap:10}}
+                    showDoneButton={false}
+                    showNextButton={false}
+                    dotStyle={{ backgroundColor: COLOURS.light.white, width: 12, height: 4, borderRadius: 4, marginHorizontal: 4 }}
+                    activeDotStyle={{ backgroundColor: COLOURS.light.accentDeepYellow, width: 18, height: 4, borderRadius: 4, marginHorizontal: 4 }}
+                />
 
-                        <TouchableOpacity
-                            disabled={false}
-                            style={[styles.withdrawCTA]}
-                            onPress={async () => {}}
-                        >
-                            <Image
-                                source={require("@/assets/images/withdraw_icon.png")}
-                                style={{ resizeMode: "contain", height: 16, width: 16}}
-                            />
-                            <Text style={styles.withdrawText}>
-                                {false ? 'Checking...' : 'Withdraw'}
-                            </Text>
-                        </TouchableOpacity>
-                    </View>
-                    <Text style={styles.availableBalanceHeaderText}>Available balance</Text>
-                    <View style={styles.balanceSection}>
-                        {showBalance ?
-                            <Text style={styles.balanceValue}>
-                                <Text style={styles.balanceCurrencySymbol}>₦</Text>
-                                <Text>{'23,439'}</Text>
-                                <Text style={styles.balanceCurrencySymbol}>.{'45'}</Text>
-                            </Text> : <Text style={styles.cardValue}>*****</Text>
-                        }
-                        <TouchableOpacity onPress={() => setShowBalance(!showBalance)} style={styles.eyeIcon}>
-                            <Ionicons
-                                name={showBalance ? "eye-outline" : "eye-off-outline"}
-                                size={20}
-                                color={COLOURS.light.white}
-                            />
-                        </TouchableOpacity>
-                    </View>
-                    <TouchableOpacity 
-                        style={styles.statementButton}
-                        onPress={() => {}}
-                    >
-                        <Text style={styles.statementText}>View Account Details</Text>
-                        <Ionicons name="chevron-forward" size={13} color={COLOURS.light.white} style={{ marginBottom: -2 }} />
-                    </TouchableOpacity>
-                </View>
                 {/* Other dashboard components can go here */}
 
                 <View style={styles.recentActivityHeader}>
@@ -113,6 +100,9 @@ const DashBoard:React.FC =  () => {
                         <Ionicons name="chevron-forward" size={16} color={COLOURS.light.accentDeepYellow} style={{ marginBottom: -2 }} />
                     </Pressable>
                 </View>
+
+                {/* static pages just to simulate transactions */}
+                {/* optimise this to use flatlist or sectionlist depends on design and real transactions */}
 
                 <View style={styles.activityItemContainer}>
                     <View style={styles.activityIconContainer}>

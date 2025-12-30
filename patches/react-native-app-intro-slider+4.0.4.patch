@@ -1,0 +1,22 @@
+diff --git a/node_modules/react-native-app-intro-slider/dist/index.js b/node_modules/react-native-app-intro-slider/dist/index.js
+index 0935c97..95d30c7 100644
+--- a/node_modules/react-native-app-intro-slider/dist/index.js
++++ b/node_modules/react-native-app-intro-slider/dist/index.js
+@@ -180,14 +180,15 @@ AppIntroSlider.defaultProps = {
+ };
+ const styles = react_native_1.StyleSheet.create({
+     flexOne: {
+-        flex: 1,
++        // flex: 1,
+     },
+     flatList: {
+         flex: 1,
+         flexDirection: isAndroidRTL ? 'row-reverse' : 'row',
+     },
+     paginationContainer: {
+-        position: 'absolute',
++        // position: 'absolute',
++        marginTop: 16,
+         bottom: 16,
+         left: 16,
+         right: 16,

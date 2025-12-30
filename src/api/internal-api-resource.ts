@@ -1,12 +1,10 @@
-import axios, { AxiosError, AxiosRequestConfig, AxiosResponse, InternalAxiosRequestConfig } from "axios";
+import axios, { AxiosError, AxiosResponse, InternalAxiosRequestConfig } from "axios";
 import { store } from "@/store";
 
 
 export const internalAPIResource = () => {
 
     const BASE_URL = "https://switchpay-backend.onrender.com/api/v1/";
-    const reduxStore = store.getState();
-    const { idToken } = reduxStore.auth;
     const client = axios.create({
         baseURL: BASE_URL,
         headers: {
@@ -21,7 +19,17 @@ export const internalAPIResource = () => {
    */
   client.interceptors.request.use(
     (config: InternalAxiosRequestConfig) => {
-        return config;
+      if (!config?.skipToken) {
+        const state = store.getState();
+        const token = state.auth.idToken;
+        if (token) {
+          config.headers = {
+            ...config.headers,
+            Authorization: `Bearer ${token}`,
+          };
+        }
+      }
+      return config;
     },
     (error: AxiosError) => Promise.reject(error)
   );
@@ -43,9 +51,6 @@ const ApiErrorResource = (error: AxiosError) => {
     try {
         const status = error?.request?.status;
         if (status >= 500 && status <= 599) {
-            
-            // Sentry.captureException(error);
-            // throw NETWORK_ERROR_HANDLED;
         }
 
         if (status >= 400 && status <= 499) {
@@ -59,4 +64,4 @@ const ApiErrorResource = (error: AxiosError) => {
     } catch (error) {
         return Promise.reject(error);
     }
-  };
+};

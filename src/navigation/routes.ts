@@ -8,10 +8,12 @@ const ROUTES = {
   DASHBOARD: "DashBoard",
   AUTH_STACK: "AuthStack",
   HOME: "Home",
+  CARD: "Card",
   PROFILE: "Profile",
   SETTINGS: "Settings",
   LOGIN: "Login",
   REGISTER: "Register",
+  EXPLORE: "Explore",
 } as const;
 
 export default ROUTES;

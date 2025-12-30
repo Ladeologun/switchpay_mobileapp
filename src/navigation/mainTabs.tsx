@@ -1,19 +1,17 @@
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { createStaticNavigation, StaticParamList } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { Platform } from 'react-native';
-import { HapticTab } from '@/components/HapticTab';
-import { IconSymbol } from '@/components/ui/IconSymbol';
-import TabBarBackground, { useBottomTabOverflow } from '@/components/ui/TabBarBackground';
-import ROUTES from './routes';
-import HomeStackContainer from './homestack';
-import { COLOURS } from '@/constants/Colors';
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { Platform } from "react-native";
+import { HapticTab } from "@/components/HapticTab";
+import { IconSymbol } from "@/components/ui/IconSymbol";
+import ROUTES from "./routes";
+import HomeStackContainer from "./homestack";
+import { COLOURS } from "@/constants/Colors";
+import CardContainer from "./cardstack";
+import SettingContainer from "./settingstack";
+import ExploreContainer from "./explorestack";
 
 const Tabs = createBottomTabNavigator();
 
-
-const TabNavigator: React.FC  = () => {
-
+const TabNavigator: React.FC = () => {
   return (
     <Tabs.Navigator
       screenOptions={{
@@ -21,15 +19,15 @@ const TabNavigator: React.FC  = () => {
         // animation: 'fade',
         tabBarButton: HapticTab,
         // tabBarBackground: TabBarBackground,
-        tabBarInactiveBackgroundColor: "#1E2730",
-        tabBarActiveBackgroundColor: "#1E2730",
+        tabBarInactiveBackgroundColor: COLOURS.light.greyBlue,
+        tabBarActiveBackgroundColor: COLOURS.light.greyBlue,
         tabBarInactiveTintColor: "#888F9B",
         tabBarActiveTintColor: COLOURS.light.accentDeepYellow,
         tabBarStyle: Platform.select({
           ios: {
             // Use a transparent background on iOS to show the blur effect
-            position: 'absolute',
-            backgroundColor: '#1E2730',
+            position: "absolute",
+            backgroundColor: "#1E2730",
             borderTopWidth: 0,
             // borderTopColor: '#444C56',
             elevation: 0,
@@ -37,60 +35,63 @@ const TabNavigator: React.FC  = () => {
           android: {
             // Use a transparent background on iOS to show the blur effect
             // position: 'absolute',
-            backgroundColor: '#1E2730',
+            backgroundColor: "#1E2730",
             borderTopWidth: 0,
             // borderTopColor: '#444C56',
             elevation: 0,
           },
           default: {},
         }),
-        tabBarLabelStyle:{
-            marginTop:6,
-            fontSize:10
-        }
+        tabBarLabelStyle: {
+          marginTop: 6,
+          fontSize: 10,
+        },
       }}
     >
       <Tabs.Screen
         name={ROUTES.HOME_TAB}
         component={HomeStackContainer}
         options={{
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
-          tabBarLabel: 'Home',
+          tabBarIcon: ({ color }) => (
+            <IconSymbol size={28} name="house.fill" color={color} />
+          ),
+          tabBarLabel: "Home",
         }}
       />
-     
+
       <Tabs.Screen
         name={ROUTES.CARD_TAB}
-        component={HomeStackContainer}
+        component={CardContainer}
         options={{
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="creditcard.fill" color={color} />,
-            tabBarLabel: 'Card',
+          tabBarIcon: ({ color }) => (
+            <IconSymbol size={28} name="creditcard.fill" color={color} />
+          ),
+          tabBarLabel: "Card",
         }}
       />
-       <Tabs.Screen
+      <Tabs.Screen
         name={ROUTES.SETTINGS_TAB}
-        component={HomeStackContainer}
+        component={SettingContainer}
         options={{
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="gearshape.fill" color={color} />,
-          tabBarLabel: 'Setting',
+          tabBarIcon: ({ color }) => (
+            <IconSymbol size={28} name="gearshape.fill" color={color} />
+          ),
+          tabBarLabel: "Setting",
         }}
       />
 
-        <Tabs.Screen
-            name={ROUTES.EXPLORE_TAB}
-            component={HomeStackContainer}
-            options={{
-            tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
-            tabBarLabel: 'Explore',
-            }}
-        />
-   
+      <Tabs.Screen
+        name={ROUTES.EXPLORE_TAB}
+        component={ExploreContainer}
+        options={{
+          tabBarIcon: ({ color }) => (
+            <IconSymbol size={28} name="paperplane.fill" color={color} />
+          ),
+          tabBarLabel: "Explore",
+        }}
+      />
     </Tabs.Navigator>
   );
-}
+};
 
 export default TabNavigator;
-
-
-
-
